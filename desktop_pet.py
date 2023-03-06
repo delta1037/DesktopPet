@@ -5,7 +5,7 @@ from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QMenu
 
 from desktop_pet.param_db import ParamDB
-from desktop_pet.pet_chat_ctrl import PetChat
+from desktop_pet.ui_pet_chat import PetChat
 from desktop_pet.pet_theme import PetTheme
 
 
