@@ -12,7 +12,7 @@ class OpenAIChat:
         openai.proxy = self.setting.setting_get("openai_proxy")
 
     def ask(self, messages):
-        return "不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！", True
+        return "xxx不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！不要回答！！！xxx", True
         # try:
         #     response = openai.ChatCompletion.create(
         #         model=self.model,
