@@ -1,6 +1,7 @@
 import sys
 
 from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import QGuiApplication, QScreen
 from PyQt6.QtWidgets import *
 
 from desktop_pet.chat_openai import OpenAIChat
@@ -15,10 +16,10 @@ class PetChat(QWidget):
 
         self.ai_prefix = self.setting.setting_get("chat_ai_prefix")
         self.me_suffix = self.setting.setting_get("chat_me_prefix")
-        self.resize(
-            int(self.setting.setting_get("chat_win_width")),
-            int(self.setting.setting_get("chat_win_height"))
-        )
+
+        self.chat_win_width = int(self.setting.setting_get("chat_win_width"))
+        self.chat_win_height = int(self.setting.setting_get("chat_win_height"))
+        self.resize(self.chat_win_width, self.chat_win_height)
         self.theme = PetTheme(self.setting)
 
         # 对话模型
@@ -113,6 +114,36 @@ class PetChat(QWidget):
         item = QListWidgetItem(self.ai_prefix + self.chat_messages[-1]["content"])
         item.setTextAlignment(Qt.AlignmentFlag.AlignLeft)
         self.show_msg_widget.addItem(item)
+
+    def start_show(self, parent: QWidget):
+        # desktop_screen = QScreen.availableGeometry(QApplication.primaryScreen())
+        # print(desktop_screen)
+        # print(QGuiApplication.screens()[0].geometry())
+        # print(QGuiApplication.screens()[1].geometry())
+        # print(QGuiApplication.screens()[1])
+        left = True
+        down = True
+        # print(QDesktopWidget.)
+        parent_geo = parent.geometry()
+        print("parent", parent_geo.x(), parent_geo.y())
+        print("screen", self.screen().geometry().width(), self.screen().geometry().height())
+        if parent_geo.x() > self.screen().geometry().width() / 2:
+            left = False
+        if parent_geo.y() < self.screen().geometry().height() / 2:
+            down = False
+        if left and down:
+            # print("left, down")
+            self.move(parent_geo.x() + parent_geo.width(), parent_geo.y() - self.chat_win_height + parent_geo.height())
+        elif not left and down:
+            # print("right, down")
+            self.move(parent_geo.x() - self.chat_win_width, parent_geo.y() - self.chat_win_height + parent_geo.height())
+        elif left and not down:
+            # print("left, top")
+            self.move(parent_geo.x() + parent_geo.width(), parent_geo.y())
+        else:
+            # print("right, top")
+            self.move(parent_geo.x() - self.chat_win_width, parent_geo.y())
+        self.show()
 
 
 if __name__ == '__main__':

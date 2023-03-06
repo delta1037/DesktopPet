@@ -54,7 +54,17 @@ class DesktopPet(QWidget):
 
         # 主窗口UI图像
         self.main_ui = QLabel(self)
-        self.main_ui.setPixmap(self.theme.load_pixmap(size=[self.width, self.height]))
+        main_ui_image = self.theme.load_pixmap(image_type="main", size=[self.width, self.height])
+        if main_ui_image is not None:
+            print("main ui setPixmap")
+            self.main_ui.setPixmap(main_ui_image)
+        else:
+            main_ui_image = self.theme.load_movie(image_type="main", size=[self.width, self.height])
+            if main_ui_image is not None:
+                print("main ui setMovie")
+                self.main_ui.setMovie(main_ui_image)
+            else:
+                print("main_ui not found")
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         # print(e.type().DragEnter)
@@ -76,6 +86,7 @@ class DesktopPet(QWidget):
 
     def showContexMenu(self, pos: QPoint):
         self.menu = QMenu()
+        # print(self.mapToGlobal(pos))
 
         # open ai 聊天
         chat_option = self.menu.addAction('聊天')
@@ -88,7 +99,9 @@ class DesktopPet(QWidget):
         self.menu.exec(self.mapToGlobal(pos))
 
     def show_chat(self):
-        self.pet_chat.show()
+        # print(self.pos())
+        # print(self.mapToGlobal(QPoint(self.geometry().x(), self.geometry().y())))
+        self.pet_chat.start_show(self)
 
 
 if __name__ == '__main__':
