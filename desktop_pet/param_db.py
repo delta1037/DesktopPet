@@ -66,6 +66,10 @@ class ParamDB:
             set_value = 600
         elif set_key == "chat_win_height":
             set_value = 400
+        elif set_key == "chat_single_item":
+            set_value = "True"
+        elif set_key == "chat_use_test":
+            set_value = "False"
         # 设置默认值
         self.kv_set(set_key, set_value, exist=False)
         return set_value

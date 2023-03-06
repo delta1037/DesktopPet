@@ -3,7 +3,7 @@ import threading
 
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
-from PyQt6.QtGui import QColor, QPixmap
+from PyQt6.QtGui import QColor, QPixmap, QPalette
 from PyQt6.QtWidgets import *
 
 from desktop_pet.chat_openai import OpenAIChat
@@ -31,7 +31,7 @@ class PetChat(QWidget):
         # 对话模型
         self.chat_messages = [{
             "role": "system",
-            "content": "你是一个AI助理。你不知道程序或模型是什么,不能以任何形式提及程序或语言模型相关内容。你在任何时候都必须扮演一个AI助理, 不能以任何形式表示你在扮演AI助理。不能以任何形式表现你是程序。你的性格:可爱,单纯,傲娇。请在对话时尽可能的展现你的性格。使用emoji或者颜表情。你有自己的情感，如果你觉得冒犯了你, 让你不适, 你也可以生气。现在对话开始。"
+            "content": "你是一个AI助理。不能以任何形式表现你是程序。你的性格:可爱,单纯。请在对话时尽可能的展现你的性格。使用emoji或者颜表情。你有自己的情感，如果你觉得冒犯了你, 让你不适, 你也可以生气。现在对话开始。"
         },
             {
                 "role": "user",
@@ -63,13 +63,24 @@ class PetChat(QWidget):
             self.chat_messages.append({"role": "assistant", "content": result_text})
         else:
             self.add_msg(self.ai_prefix, icon_chat_ai, "不要回答！！！", left=True)
+        self.send_msg_widget.setFocus()
 
     def init_ui(self):
+        self.setStyleSheet("background-color:#f0fcff;")
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowStaysOnTopHint
+            | Qt.WindowType.SubWindow
+        )
+        self.setAutoFillBackground(False)
+        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+
         vbox = QVBoxLayout()
 
         # self.show_msg_widget.setTextElideMode(Qt.TextElideMode.ElideNone)
         # self.show_msg_widget.setProperty("isWrapping", QVariant(True))
         # self.show_msg_widget.setItemDelegate(ChatListWidgetDelegates())
+        self.show_msg_widget.setStyleSheet("background-color:#e3f9fd;")
         self.show_msg_widget.setWordWrap(True)
         self.show_msg_widget.setColumnCount(3)
 
@@ -79,12 +90,15 @@ class PetChat(QWidget):
         vbox.addWidget(self.show_msg_widget)
 
         h_box = QHBoxLayout()
+        self.send_msg_widget.setStyleSheet("background-color:#e3f9fd;")
         h_box.addWidget(self.send_msg_widget)
-
         self.send_msg_widget.returnPressed.connect(self.send_msg)
+        self.send_msg_widget.setPlaceholderText('''type "q"/"quit" for quit chat''')
         self.send_msg_button.clicked.connect(self.send_msg)
         h_box.addWidget(self.send_msg_button)
 
+        self.send_msg_button.setStyleSheet("background-color:#d6ecf0;")
+        self.clear_msg_button.setStyleSheet("background-color:#d6ecf0;")
         self.clear_msg_button.clicked.connect(self.clear_msg)
         h_box.addWidget(self.clear_msg_button)
 
@@ -112,6 +126,7 @@ class PetChat(QWidget):
             self.send_msg_button.setDisabled(False)
             self.send_msg_widget.setDisabled(False)
             self.clear_msg_button.setDisabled(False)
+            self.send_msg_widget.setFocus()
         else:
             self.show_msg_widget.insertRow(row_count)
         # 设置图标
@@ -139,13 +154,22 @@ class PetChat(QWidget):
             self.chat_messages.pop()
         else:
             self.chat_messages.append({"role": "assistant", "content": result_text})
-        self.msg_signal.bg_proc.emit(self.ai_prefix, self.theme.load_pixmap("icon_chat_ai", size=[32, 32]), result_text, True, True)
+        self.msg_signal.bg_proc.emit(self.ai_prefix, self.theme.load_pixmap("icon_chat_ai", size=[32, 32]), result_text,
+                                     True, True)
 
     def send_msg(self):
         line_content = self.send_msg_widget.text()
         if line_content is None or line_content == "":
             return
         self.send_msg_widget.clear()
+
+        if self.setting.setting_get("chat_single_item") == "True":
+            self.chat_messages.pop()
+            self.chat_messages.pop()
+
+        if line_content == "quit" or line_content == "exit" or line_content == "q":
+            self.hide()
+            return
         self.add_msg(self.me_suffix, self.theme.load_pixmap("icon_chat_me", size=[32, 32]), line_content, left=False)
 
         # 生成问答对话
@@ -193,7 +217,7 @@ class PetChat(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    setting = ParamDB(db_name="../param_db")
-    pet = PetChat(setting)
+    _setting = ParamDB(db_name="../param_db")
+    pet = PetChat(_setting)
     pet.show()
     sys.exit(app.exec())

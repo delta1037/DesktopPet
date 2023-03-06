@@ -41,7 +41,7 @@ class DesktopPet(QWidget):
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint
             | Qt.WindowType.WindowStaysOnTopHint
-            # | Qt.WindowType.SubWindow
+            | Qt.WindowType.SubWindow
         )
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
