@@ -13,8 +13,8 @@ class PetTheme:
 
     def load_pixmap(self, image_type="main", size=None):
         image_path = ""
-        if image_type == "main":
-            image_path = self.theme_root + 'main.png'
+        if image_type.startswith("main"):
+            image_path = self.theme_root + image_type + '.png'
         elif image_type == "icon_chat_me":
             image_path = self.theme_root + 'chat_me.ico'
         elif image_type == "icon_chat_ai":
@@ -31,8 +31,8 @@ class PetTheme:
 
     def load_movie(self, image_type="main", size=None):
         image_path = ""
-        if image_type == "main":
-            image_path = self.theme_root + 'main.gif'
+        if image_type.startswith("main"):
+            image_path = self.theme_root + image_type + '.gif'
         if os.path.exists(image_path):
             movie = QMovie(image_path)
         else:

@@ -19,6 +19,7 @@ class DesktopPet(QWidget):
         self.setting = ParamDB()
 
         self.menu = None
+        self.theme_main_count = 0
         self.main_ui = None
         self.theme = PetTheme(self.setting)
 
@@ -58,17 +59,23 @@ class DesktopPet(QWidget):
 
         # 主窗口UI图像
         self.main_ui = QLabel(self)
-        main_ui_image = self.theme.load_pixmap(image_type="main", size=[self.width, self.height])
+        self.load_theme_main(count=0)
+
+    def load_theme_main(self, count):
+        main_ui_image = self.theme.load_pixmap(image_type="main_"+str(count), size=[self.width, self.height])
         if main_ui_image is not None:
-            print("main ui setPixmap")
+            # print("main ui setPixmap")
             self.main_ui.setPixmap(main_ui_image)
+            return True
         else:
-            main_ui_image = self.theme.load_movie(image_type="main", size=[self.width, self.height])
+            main_ui_image = self.theme.load_movie(image_type="main_"+str(count), size=[self.width, self.height])
             if main_ui_image is not None:
-                print("main ui setMovie")
+                # print("main ui setMovie")
                 self.main_ui.setMovie(main_ui_image)
+                return True
             else:
-                print("main_ui not found")
+                # print("main_ui not found")
+                return False
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         # print(e.type().DragEnter)
@@ -126,6 +133,9 @@ class DesktopPet(QWidget):
         chat_option = self.menu.addAction('聊天')
         chat_option.triggered.connect(self.show_chat)
 
+        theme_option = self.menu.addAction('换肤')
+        theme_option.triggered.connect(self.rand_main)
+
         # open ai 设置
         setting_option = self.menu.addAction('设置')
         setting_option.triggered.connect(self.show_setting)
@@ -145,6 +155,13 @@ class DesktopPet(QWidget):
         # print(self.pos())
         # print(self.mapToGlobal(QPoint(self.geometry().x(), self.geometry().y())))
         self.ui_setting.start_show(self)
+
+    def rand_main(self):
+        self.theme_main_count += 1
+        status = self.load_theme_main(self.theme_main_count)
+        if not status:
+            self.theme_main_count = 0
+            status = self.load_theme_main(self.theme_main_count)
 
 
 if __name__ == '__main__':
