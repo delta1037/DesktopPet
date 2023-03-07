@@ -12,6 +12,7 @@ a = Analysis(
         'desktop_pet/param_db.py',
         'desktop_pet/pet_theme.py',
         'desktop_pet/ui_pet_chat.py',
+        'desktop_pet/ui_setting.py',
     ],
     binaries=[],
     datas=[('./theme', './theme/.'),],

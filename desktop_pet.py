@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QMenu
 from desktop_pet.param_db import ParamDB
 from desktop_pet.ui_pet_chat import PetChat
 from desktop_pet.pet_theme import PetTheme
+from desktop_pet.ui_setting import UISetting
 
 
 class DesktopPet(QWidget):
@@ -32,7 +33,10 @@ class DesktopPet(QWidget):
         self.init_ui()
 
         # chat
-        self.pet_chat = PetChat(self.setting)
+        self.ui_chat = PetChat(self.setting)
+
+        # setting
+        self.ui_setting = UISetting(self.setting)
 
         self.show()
 
@@ -85,12 +89,46 @@ class DesktopPet(QWidget):
         self.drag_s_pos = None
 
     def showContexMenu(self, pos: QPoint):
+        menu_qss = '''
+        QMenu {
+            border: 1px solid #d6ecf0; /* 边框宽度为1px，颜色为#CCCCCC */
+            border-radius: 15px; /* 边框圆角 */
+            background-color: #e3f9fd; /* 背景颜色 */
+            padding: 5px 5px 5px 5px; /* 菜单项距菜单顶部边界和底部边界分别有5px */
+        }
+        
+        QMenu::item { /* 菜单子控件item，为菜单项在default的状态 */
+            border: 0px solid transparent;
+            border-radius: 2px; /* 边框圆角 */
+            background-color: transparent;
+            color: black; /* 文本颜色 */
+            min-height: 30px; /* 菜单项的最小高度 */
+            margin: 2px 5px 2px 10px; /* 菜单项距其上下菜单项分别有2px，距菜单左右边界分别有10px和5px */
+            padding: 2px 2px 2px 2px; /* 也可使用padding定义菜单项与上下左右的距离 */
+        }
+        
+        QMenu::item:selected { /* 为菜单项在selected的状态 */
+            background-color: #e9f1f6;
+        }
+
+        QMenu::separator { /* 菜单子控件separator，定义菜单项之间的分隔线 */
+            height: 1px;
+            background: #CCCCCC;
+            margin-left: 2px; /* 距离菜单左边界2px */
+            margin-right: 2px; /* 距离菜单右边界2px */
+        }
+        '''
         self.menu = QMenu()
+        self.menu.setStyleSheet(menu_qss)
         # print(self.mapToGlobal(pos))
 
         # open ai 聊天
         chat_option = self.menu.addAction('聊天')
         chat_option.triggered.connect(self.show_chat)
+
+        # open ai 设置
+        setting_option = self.menu.addAction('设置')
+        setting_option.triggered.connect(self.show_setting)
 
         # 退出
         exit_option = self.menu.addAction('退出')
@@ -101,7 +139,12 @@ class DesktopPet(QWidget):
     def show_chat(self):
         # print(self.pos())
         # print(self.mapToGlobal(QPoint(self.geometry().x(), self.geometry().y())))
-        self.pet_chat.start_show(self)
+        self.ui_chat.start_show(self)
+
+    def show_setting(self):
+        # print(self.pos())
+        # print(self.mapToGlobal(QPoint(self.geometry().x(), self.geometry().y())))
+        self.ui_setting.start_show(self)
 
 
 if __name__ == '__main__':

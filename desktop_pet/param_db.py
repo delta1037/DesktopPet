@@ -31,6 +31,7 @@ class ParamDB:
         else:
             sql = '''INSERT INTO setting (key, value) VALUES ("{}","{}")'''.format(key, value)
         cur = self.conn.cursor()
+        # print(sql)
         cur.execute(sql)
         self.conn.commit()
 
@@ -56,6 +57,10 @@ class ParamDB:
             set_value = "xxx"
         elif set_key == "openai_api_key":
             set_value = "xxx"
+        elif set_key == "openai_role":
+            set_value = "AI助理"
+        elif set_key == "openai_character":
+            set_value = "可爱,单纯"
         elif set_key == "openai_proxy":
             set_value = "http://127.0.0.1:8080"
         elif set_key == "chat_ai_prefix":
@@ -70,6 +75,10 @@ class ParamDB:
             set_value = "True"
         elif set_key == "chat_use_test":
             set_value = "False"
+        elif set_key == "setting_win_width":
+            set_value = 300
+        elif set_key == "setting_win_height":
+            set_value = 450
         # 设置默认值
         self.kv_set(set_key, set_value, exist=False)
         return set_value
